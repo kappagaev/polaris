@@ -9,6 +9,7 @@ export class ScheduleEvent {
     public options: OptionInfo[],
     public description: string[],
     public hashTags: string[],
+    public isTaskDone: boolean | null = null,
   ) {}
 
   public toString() {
