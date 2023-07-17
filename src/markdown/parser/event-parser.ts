@@ -14,7 +14,7 @@ export class EventParser extends BaseParser<ScheduleEvent> {
     this.matchString("-")
     this.spaces1()
 
-    const done = this.parseDone()
+    const taskDone = this.parseTaskDone()
 
     const time = this.applyParser(TimeInfoParser)
     this.spaces1()
@@ -23,7 +23,14 @@ export class EventParser extends BaseParser<ScheduleEvent> {
     const options = this.parseOptions()
     const description = this.applyParser(DescriptionParser)
 
-    return new ScheduleEvent(time, title, options, description, hashTags, done)
+    return new ScheduleEvent(
+      time,
+      title,
+      options,
+      description,
+      hashTags,
+      taskDone,
+    )
   }
 
   private parseTitle(): string {
@@ -36,13 +43,13 @@ export class EventParser extends BaseParser<ScheduleEvent> {
     return this.optional(() => this.applyParser(OptionsParser)).getOrElse([])
   }
 
-  private parseDone(): boolean {
-    return this.optional(() => {
+  private parseTaskDone(): boolean | null {
+    return this.optional<boolean | null>(() => {
       const result = this.applyParser(CheckboxParser)
 
       this.spaces1()
 
       return result
-    }).getOrElse(false)
+    }).getOrElse(null)
   }
 }
