@@ -9,9 +9,10 @@ describe("ScheduleParser", () => {
 
     description line 1  
     description line 2
+---
 - 16:00 Title 2 | -c green
     description line 1
-
+---
 #Hangar18 
 #PeaceSells
 
@@ -19,8 +20,7 @@ describe("ScheduleParser", () => {
 #AngryAgain
 
 - 18:00 - 20:00 Title 3
-  
-  `
+---`
     const result = new ScheduleParser(input).parse()
 
     expect(result).toEqual([
