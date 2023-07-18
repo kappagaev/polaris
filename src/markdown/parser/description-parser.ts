@@ -5,21 +5,12 @@ export class DescriptionParser extends BaseParser<string[]> {
   public parse(): string[] {
     return this.many(() => {
       const res = this.attempt(() => {
-        this.many(() => {
-          this.emptyLine()
-        })
+        this.many(() => this.emptyLine())
 
         this.expectSat((ch) => ch !== "-" && ch !== "#")
         this.spaces()
 
-        const words = this.many1(() => {
-          const word = this.parseWord()
-          const spaces = this.many(() => this.oneOf([" "])).join("")
-
-          return word + spaces
-        })
-
-        return words
+        return this.parseManyWords()
       })
 
       if (!isSuccess(res)) {
@@ -27,6 +18,15 @@ export class DescriptionParser extends BaseParser<string[]> {
       }
 
       return res.value.join("").trim()
+    })
+  }
+
+  private parseManyWords(): string[] {
+    return this.many1(() => {
+      const word = this.parseWord()
+      const spaces = this.many(() => this.oneOf([" "])).join("")
+
+      return word + spaces
     })
   }
 

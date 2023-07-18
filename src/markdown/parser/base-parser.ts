@@ -268,4 +268,9 @@ export abstract class BaseParser<TResult = unknown> {
     this.oneOf(["\n"])
     this.spaces()
   }
+
+  public emptyLineReverse(): void {
+    this.spaces()
+    this.oneOf(["\n"])
+  }
 }

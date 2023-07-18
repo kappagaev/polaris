@@ -9,7 +9,10 @@ describe("ScheduleParser", () => {
 
     description line 1  
     description line 2
+
 ---
+
+
 - 16:00 Title 2 | -c green
     description line 1
 ---
@@ -19,8 +22,9 @@ describe("ScheduleParser", () => {
 #HolyWars    #Lucretia
 #AngryAgain
 
-- 18:00 - 20:00 Title 3
----`
+- [X] 18:00 - 20:00 Title 3
+  
+`
     const result = new ScheduleParser(input).parse()
 
     expect(result).toEqual([
@@ -48,6 +52,7 @@ describe("ScheduleParser", () => {
         [],
         [],
         ["Hangar18", "PeaceSells", "HolyWars", "Lucretia", "AngryAgain"],
+        true,
       ),
     ])
   })

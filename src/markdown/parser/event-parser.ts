@@ -23,8 +23,6 @@ export class EventParser extends BaseParser<ScheduleEvent> {
     const options = this.parseOptions()
     const description = this.applyParser(DescriptionParser)
 
-    this.parseSeparator()
-
     return new ScheduleEvent(
       time,
       title,
@@ -53,10 +51,5 @@ export class EventParser extends BaseParser<ScheduleEvent> {
 
       return result
     }).getOrElse(null)
-  }
-
-  private parseSeparator(): void {
-    this.matchString("\n---")
-    this.spaces()
   }
 }
