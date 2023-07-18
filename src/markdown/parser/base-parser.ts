@@ -122,6 +122,18 @@ export abstract class BaseParser<TResult = unknown> {
   }
 
   public sepBy<T>(valueParser: () => T, sepParser: () => any): T[] {
+    return this._sepBy(valueParser, sepParser, true)
+  }
+
+  public sepByNotStrict<T>(valueParser: () => T, sepParser: () => any): T[] {
+    return this._sepBy(valueParser, sepParser, false)
+  }
+
+  private _sepBy<T>(
+    valueParser: () => T,
+    sepParser: () => any,
+    strict: boolean,
+  ): T[] {
     const results: T[] = []
     const firstValueResult = this.optional(() => valueParser())
 
@@ -132,10 +144,14 @@ export abstract class BaseParser<TResult = unknown> {
     results.push(firstValueResult.value)
 
     while (true) {
-      const sepAndValueResult = this.optional(() => {
+      const stepCallback = () => {
         sepParser()
         return valueParser()
-      })
+      }
+
+      const sepAndValueResult = strict
+        ? this.optional(stepCallback)
+        : this.attempt(stepCallback)
 
       if (!isSuccess(sepAndValueResult)) {
         break

@@ -101,5 +101,41 @@ describe("ScheduleParser", () => {
         ),
       ])
     })
+
+    it("should optionally parse a separator at the end", () => {
+      const input = `- 11:00 - 15:40 Title | -m -c red -p [string, foo@bar.com, vlad] 
+  
+      description line 1  
+      description line 2
+  
+---
+  
+- 16:00 Title 2 | -c green
+      description line 1
+---
+`
+      const result = new ScheduleParser(input).parse()
+
+      expect(result).toEqual([
+        new ScheduleEvent(
+          new TimeInfo("11:00", "15:40"),
+          "Title",
+          [
+            new OptionInfo("m", true),
+            new OptionInfo("c", "red"),
+            new OptionInfo("p", ["string", "foo@bar.com", "vlad"]),
+          ],
+          ["description line 1", "description line 2"],
+          [],
+        ),
+        new ScheduleEvent(
+          new TimeInfo("16:00"),
+          "Title 2",
+          [new OptionInfo("c", "green")],
+          ["description line 1"],
+          [],
+        ),
+      ])
+    })
   })
 })
