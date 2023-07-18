@@ -3,34 +3,28 @@ import { isSuccess } from "./parsing-result"
 
 export class DescriptionParser extends BaseParser<string[]> {
   public parse(): string[] {
-    return this.many(() => {
-      const res = this.attempt(() => {
-        this.many(() => this.emptyLine())
+    return this.many(() => this.parseOneDescriptionLine()).filter(
+      (line) => line.length,
+    )
+  }
 
-        this.expectSat((ch) => ch !== "-" && ch !== "#")
-        this.spaces()
+  private parseOneDescriptionLine(): string {
+    const res = this.attempt(() => {
+      this.oneOf(["\n"])
 
-        return this.parseManyWords()
-      })
+      const line = this.many(() => this.noneOf(["\n", ""])).join("")
 
-      if (!isSuccess(res)) {
-        throw new Error("not a line")
+      if (line.startsWith("---")) {
+        throw new Error(`Description line cannot start with '---'`)
       }
 
-      return res.value.join("").trim()
+      return line
     })
-  }
 
-  private parseManyWords(): string[] {
-    return this.many1(() => {
-      const word = this.parseWord()
-      const spaces = this.many(() => this.oneOf([" "])).join("")
+    if (!isSuccess(res)) {
+      throw new Error("not a line")
+    }
 
-      return word + spaces
-    })
-  }
-
-  private parseWord(): string {
-    return this.many1(() => this.noneOf(["#", "\n", " "])).join("")
+    return res.value.trim()
   }
 }
