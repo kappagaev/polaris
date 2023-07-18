@@ -23,6 +23,7 @@ describe("EventSerializer", () => {
         [new OptionInfo("c", "green")],
         ["description line 1"],
         [],
+        true,
       ),
       new ScheduleEvent(
         new TimeInfo("18:00", "20:00"),
@@ -30,6 +31,7 @@ describe("EventSerializer", () => {
         [],
         [],
         ["Hangar18", "PeaceSells", "HolyWars", "Lucretia", "AngryAgain"],
+        false,
       ),
     ])
 
@@ -38,7 +40,7 @@ describe("EventSerializer", () => {
   description line 1
   description line 2
 
-- 16:00 Title 2 | -c green
+- [X] 16:00 Title 2 | -c green
   description line 1
 
 #Hangar18
@@ -46,7 +48,7 @@ describe("EventSerializer", () => {
 #HolyWars
 #Lucretia
 #AngryAgain
-- 18:00 - 20:00 Title 3`,
+- [ ] 18:00 - 20:00 Title 3`,
     )
   })
 })

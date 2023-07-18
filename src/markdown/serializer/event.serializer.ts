@@ -19,7 +19,12 @@ export class EventSerializer implements Serializer<ScheduleEvent> {
   }
 
   private serializeTitleLine(event: ScheduleEvent) {
-    const parts = ["-", this.serializeTime(event.time), event.title]
+    const parts = [
+      "-",
+      this.serializeCheckbox(event.isTaskDone),
+      this.serializeTime(event.time),
+      event.title,
+    ]
 
     const optionsSerialized = event.options.map((option) => option.toString())
 
@@ -27,7 +32,17 @@ export class EventSerializer implements Serializer<ScheduleEvent> {
       parts.push("|", ...optionsSerialized)
     }
 
-    return parts.join(" ")
+    return parts.filter((part) => !!part).join(" ")
+  }
+
+  private serializeCheckbox(isTaskDone: boolean | null): string {
+    if (isTaskDone === null) {
+      return ""
+    }
+
+    const mark = isTaskDone ? "X" : " "
+
+    return `[${mark}]`
   }
 
   private serializeTime(timeInfo: TimeInfo): string {
