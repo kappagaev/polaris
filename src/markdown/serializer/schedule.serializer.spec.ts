@@ -3,7 +3,7 @@ import { ScheduleEvent } from "../models/schedule-event"
 import { TimeInfo } from "../models/time-info"
 import { ScheduleSerializer } from "./schedule.serializer"
 
-describe("EventSerializer", () => {
+describe("ScheduleSerializer", () => {
   it("should serialize a schedule", () => {
     const result = new ScheduleSerializer().serialize([
       new ScheduleEvent(
@@ -39,9 +39,11 @@ describe("EventSerializer", () => {
       `- 11:00 - 15:40 Title | -m -c red -p [string, foo@bar.com, vlad]
   description line 1
   description line 2
+---
 
 - [X] 16:00 Title 2 | -c green
   description line 1
+---
 
 #Hangar18
 #PeaceSells
