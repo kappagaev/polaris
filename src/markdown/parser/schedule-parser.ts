@@ -4,17 +4,29 @@ import { EventParser } from "./event-parser"
 
 export class ScheduleParser extends BaseParser<ScheduleEvent[]> {
   public parse(): ScheduleEvent[] {
-    const events = this.many(() => {
-      const event = this.applyParser(EventParser)
+    const events = this.sepByNotStrict(
+      () => this.applyParser(EventParser),
+      () => {
+        this.parseSeparator()
+        this.many(() => this.emptyLineReverse())
+      },
+    )
 
-      this.many(() => {
-        this.emptyLine()
-      })
-      return event
-    })
-
-    // this.expectOneOf([""])
+    this.optional(() => this.parseFinalSeparator())
 
     return events
+  }
+
+  private parseSeparator(): void {
+    this.oneOf(["\n"])
+    this.matchString("---")
+    this.spaces()
+    this.oneOf(["\n"])
+  }
+
+  private parseFinalSeparator(): void {
+    this.oneOf(["\n"])
+    this.matchString("---")
+    this.spaces()
   }
 }

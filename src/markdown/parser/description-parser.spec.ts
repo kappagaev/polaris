@@ -17,6 +17,7 @@ describe("DescriptionParser", () => {
     const input = `
     description line 1  
     description line 2
+---
 - 18:20 Title
     `
 
