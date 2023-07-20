@@ -5,22 +5,26 @@ import { ScheduleParser } from "./schedule-parser"
 
 describe("ScheduleParser", () => {
   it("should parse an entire schedule", () => {
-    const input = `- 11:00 - 15:40 Title | -m -c red -p [string, foo@bar.com, vlad]
+    const input = `- 11:00 - 15:40 Title | -m -c red -p [string, foo@bar.com, vlad] 
 
     description line 1  
     description line 2
+
+---
+
+
 - 16:00 Title 2 | -c green
     description line 1
-
+---
 #Hangar18 
 #PeaceSells
 
 #HolyWars    #Lucretia
 #AngryAgain
 
-- 18:00 - 20:00 Title 3
+- [X] 18:00 - 20:00 Title 3
   
-  `
+`
     const result = new ScheduleParser(input).parse()
 
     expect(result).toEqual([
@@ -48,7 +52,90 @@ describe("ScheduleParser", () => {
         [],
         [],
         ["Hangar18", "PeaceSells", "HolyWars", "Lucretia", "AngryAgain"],
+        true,
       ),
     ])
+  })
+
+  describe("event separator", () => {
+    it("should only parse event separator at the start of a line", () => {
+      const input = `- 11:00 - 15:40 Title | -m -c red -p [string, foo@bar.com, vlad] 
+
+    description line 1  
+    description line 2
+
+ ---
+
+- 16:00 Title 2 | -c green
+    description line 1
+---
+- [X] 18:00 - 20:00 Title 3
+`
+      const result = new ScheduleParser(input).parse()
+
+      expect(result).toEqual([
+        new ScheduleEvent(
+          new TimeInfo("11:00", "15:40"),
+          "Title",
+          [
+            new OptionInfo("m", true),
+            new OptionInfo("c", "red"),
+            new OptionInfo("p", ["string", "foo@bar.com", "vlad"]),
+          ],
+          [
+            "description line 1",
+            "description line 2",
+            "---",
+            "- 16:00 Title 2 | -c green",
+            "description line 1",
+          ],
+          [],
+        ),
+        new ScheduleEvent(
+          new TimeInfo("18:00", "20:00"),
+          "Title 3",
+          [],
+          [],
+          [],
+          true,
+        ),
+      ])
+    })
+
+    it("should optionally parse a separator at the end", () => {
+      const input = `- 11:00 - 15:40 Title | -m -c red -p [string, foo@bar.com, vlad] 
+  
+      description line 1  
+      description line 2
+  
+---
+  
+- 16:00 Title 2 | -c green
+      description line 1
+---
+`
+      const result = new ScheduleParser(input).parse()
+
+      expect(result).toEqual([
+        new ScheduleEvent(
+          new TimeInfo("11:00", "15:40"),
+          "Title",
+          [
+            new OptionInfo("m", true),
+            new OptionInfo("c", "red"),
+            new OptionInfo("p", ["string", "foo@bar.com", "vlad"]),
+          ],
+          ["description line 1", "description line 2"],
+          [],
+        ),
+        new ScheduleEvent(
+          new TimeInfo("16:00"),
+          "Title 2",
+          [new OptionInfo("c", "green")],
+          ["description line 1"],
+          [],
+        ),
+      ])
+    })
   })
 })
